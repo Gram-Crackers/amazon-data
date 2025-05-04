@@ -1,3 +1,4 @@
+//contains basic breadth-first search and a function that helps call it on all nodes and average.
 use rand::seq::IteratorRandom;
 use rand::rng;
 use std::collections::VecDeque;

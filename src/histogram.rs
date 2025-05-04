@@ -1,3 +1,4 @@
+//module contains both functions used to create and output a histogram.
 use rand::seq::IteratorRandom;
 use std::collections::HashMap;
 use rand::rng;
@@ -24,12 +25,12 @@ pub fn avg_distance_histogram(adj_list: &Vec<Vec<usize>>, sample_size: usize) ->
     //it either inserts or increments the count for its distance.
     for start in &samples {
         let distances = bfs(adj_list, *start);
+
         for d in &distances {
             if let Some(dist) = &d {
                 if *dist > 0 {
                     *frequency.entry(*dist).or_insert(0) += 1;
                 }
-
             }
         }
     }
@@ -56,4 +57,35 @@ pub fn print_histogram(histogram: &HashMap<usize, usize>) {
         }
     }
     println!("Distances with very low counts are omitted")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_avg_distance_histogram() {
+        // Define a simple graph 0 -> 1 -> 2 -> 3 and 0 -> 2
+        let adj_list = vec![
+            vec![1, 2],  
+            vec![2],     
+            vec![3],     
+            vec![],      
+        ];
+
+        // Use a smaller sample size for testing
+        let sample_size = 3;
+
+        // Calculate the histogram
+        let histogram = avg_distance_histogram(&adj_list, sample_size);
+
+        // Check that histogram is not empty
+        assert!(!histogram.is_empty(), "Histogram should not be empty");
+
+        let mut expected_histogram: HashMap<usize, usize> = HashMap::new();
+        expected_histogram.insert(2, 2);
+        expected_histogram.insert(1, 4); //fill new HashMap with human-counted distances
+
+        assert_eq!(histogram, expected_histogram);
+    }
 }

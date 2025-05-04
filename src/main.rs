@@ -13,10 +13,9 @@ fn main() {
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
     let sample_size:usize = input.trim().parse().expect("Not a valid sample size");
-    println!("sample_size: {}", sample_size);
-
+    println!("sample_size: {}", sample_size); //all of this code is i/o for the sample size
     
-    let start = std::time::Instant::now();
+    let start = std::time::Instant::now(); //tracking runtime because it gets fairly long with high sample size
 
     let adj_list = read_graph("amazon0302.txt");
     

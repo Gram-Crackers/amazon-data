@@ -1,3 +1,4 @@
+//module contains all functions that calculate a closeness score.
 use rand::seq::IteratorRandom;
 use std::collections::HashMap;
 use rand::rng;
@@ -16,6 +17,24 @@ fn reverse_al(adj_list: &Vec<Vec<usize>>) -> Vec<Vec<usize>> {
     reversed
 }
 
+//This takes an adjacency list and start node and returns the node's out closeness
+pub fn out_closeness(adj_list: &Vec<Vec<usize>>, start: usize) -> f64 {
+    let distances = bfs(adj_list, start);
+    let mut count = 0;
+    let mut total_distance = 0;
+
+    //similar to avg_distance loop, but only performs it for one start node
+    for d in &distances {
+        if let Some(dist) = &d {
+            if *dist > 0 as usize {
+                total_distance += dist;
+                count += 1;
+            }
+        }
+    }
+    count as f64 / total_distance as f64
+}
+
 //This function is nearly identical to out_closeness, but reverses the adjacency list. 
 pub fn in_closeness(adj_list: &Vec<Vec<usize>>, start: usize) -> f64 {
     let rev_adj_list = reverse_al(adj_list);
@@ -32,28 +51,10 @@ pub fn in_closeness(adj_list: &Vec<Vec<usize>>, start: usize) -> f64 {
         }
     }
 
-    if total_distance == 0 { //had to add a 0 check just in case, it failed once
+    if total_distance == 0 { //had to add a 0 check just in case, it failed once with a small sample size
         return 0.0
     }
 
-    count as f64 / total_distance as f64
-}
-
-//This takes an adjacency list and start node and returns the node's out closeness
-pub fn out_closeness(adj_list: &Vec<Vec<usize>>, start: usize) -> f64 {
-    let distances = bfs(adj_list, start);
-    let mut count = 0;
-    let mut total_distance = 0;
-
-    //similar to avg_distance loop, but only performs it for one start node
-    for d in &distances {
-        if let Some(dist) = &d {
-            if *dist > 0 as usize {
-                total_distance += dist;
-                count += 1;
-            }
-        }
-    }
     count as f64 / total_distance as f64
 }
 
@@ -110,4 +111,31 @@ pub fn get_all_in_closeness(adj_list: &Vec<Vec<usize>>, sample_size: usize) -> V
     closeness_vec.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
     closeness_vec
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_reverse_al() {
+        let adj_list = vec![vec![1], vec![2], vec![3], vec![]]; //graph is 0 -> 1 -> 2 -> 3
+
+        let expected_reverse = vec![vec![], vec![0], vec![1], vec![2]];
+
+        let reversed = reverse_al(&adj_list);
+
+        assert_eq!(reversed, expected_reverse);
+    }
+
+    #[test]
+    fn test_out_closeness() {
+        let adj_list = vec![vec![1, 2], vec![2], vec![3], vec![]]; //graph is 0 -> 1 -> 2 -> 3 and 0 ->2
+
+        let closeness = out_closeness(&adj_list, 0); 
+
+        let expected_closeness = 0.75; //hand-calculated closeness should be .75 (3/(1+1+2))
+
+        assert!((closeness - expected_closeness) < 1e-6); //built in tolerance for floating point math
+    }
 }

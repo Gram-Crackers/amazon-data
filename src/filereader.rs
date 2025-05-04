@@ -1,3 +1,4 @@
+//module is only for reading the file, but this function didn't make sense in a different module.
 use std::fs::File;
 use std::io::BufRead;
 
@@ -12,14 +13,14 @@ pub fn read_graph(path: &str) -> Vec<Vec<usize>> {
     //for each line, parse into f64s and store in "parts" tuple, then push into edges
     for line in buf_reader {
         let line_str = line.expect("Error reading");
-        let parts: Vec<usize> = line_str
+        let parts: Vec<usize> = line_str //split the first and second digits, then parse each into f64 and collect
             .split_whitespace()
             .map(|x| x.parse().unwrap())
             .collect();
-        if parts.len() == 2 {
-            let (from, to) = (parts[0], parts[1]);
+        if parts.len() == 2 { //This makes sure no incorrect lines get through
+            let (from, to) = (parts[0], parts[1]); 
             max_node = max_node.max(from).max(to);
-            edges.push((from, to));
+            edges.push((from, to)); //push the node into the edges vector
         }
     }
     
@@ -29,5 +30,6 @@ pub fn read_graph(path: &str) -> Vec<Vec<usize>> {
     for (from, to) in edges {
         adj_list[from].push(to)
     }
+
     adj_list
 }
