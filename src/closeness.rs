@@ -61,7 +61,6 @@ pub fn out_closeness(adj_list: &Vec<Vec<usize>>, start: usize) -> f64 {
 pub fn get_all_out_closeness(adj_list: &Vec<Vec<usize>>, sample_size: usize) -> Vec<(usize, f64)> {
     //initializing a HashMap because that is the easiest way to store each node and closeness
     let mut rng = rng();
-    let sample_size = 1000;
     let mut closeness_map: HashMap<usize, f64> = HashMap::new();
 
     let nodes_with_edges: Vec<usize> = adj_list.iter() //same filter
@@ -89,7 +88,6 @@ pub fn get_all_out_closeness(adj_list: &Vec<Vec<usize>>, sample_size: usize) -> 
 pub fn get_all_in_closeness(adj_list: &Vec<Vec<usize>>, sample_size: usize) -> Vec<(usize, f64)> {
     let mut closeness_map: HashMap<usize, f64> = HashMap::new();
     let mut rng = rng();
-    let sample_size = 1000;
 
     let rev_adj_list = reverse_al(adj_list);
 
